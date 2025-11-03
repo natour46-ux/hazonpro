@@ -78,7 +78,7 @@ const PublicProducts = () => {
               <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xl">
                 🛡️
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">CommSecure</h1>
+              <h1 className="text-2xl font-bold text-gray-900">חזון מערכות אבטחה</h1>
             </Link>
             <Link to="/admin/login">
               <Button variant="outline">כניסה למערכת</Button>
