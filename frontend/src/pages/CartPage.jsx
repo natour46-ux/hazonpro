@@ -163,7 +163,7 @@ const CartPage = () => {
                   size="lg"
                   onClick={handleCheckout}
                 >
-                  המשך לצור קשר
+                  המשך לתשלום →
                 </Button>
 
                 <Button 
