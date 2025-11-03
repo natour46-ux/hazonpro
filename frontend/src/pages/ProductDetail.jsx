@@ -69,9 +69,14 @@ const ProductDetail = () => {
               </div>
               <h1 className="text-2xl font-bold text-gray-900">חזון מערכות אבטחה</h1>
             </Link>
-            <Link to="/products">
-              <Button variant="outline">← חזרה למוצרים</Button>
-            </Link>
+            <div className="flex gap-4">
+              <Link to="/cart" className="relative">
+                <Button>🛒 סל ({getCartCount()})</Button>
+              </Link>
+              <Link to="/products">
+                <Button variant="outline">← חזרה למוצרים</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
