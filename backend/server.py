@@ -658,8 +658,11 @@ async def submit_contact_form(form_data: ContactForm):
     
     await db.contacts.insert_one(contact_dict)
     
-    # TODO: Send email notification to hazon.pro@gmail.com
-    # This requires SMTP configuration which wasn't set up yet
+    # Send email notification
+    try:
+        await send_contact_form_email(contact_dict)
+    except Exception as e:
+        logger.error(f"Failed to send contact form email: {str(e)}")
     
     return {"message": "Contact form submitted successfully", "id": contact_dict['id']}
 
