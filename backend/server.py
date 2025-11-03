@@ -72,6 +72,41 @@ class TokenResponse(BaseModel):
     token_type: str
     user: UserResponse
 
+# Dependency to get current user from token
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    token = credentials.credentials
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+    
+    user_email = payload.get("sub")
+    if user_email is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials"
+        )
+    
+    user = await db.users.find_one({"email": user_email}, {"_id": 0})
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found"
+        )
+    
+    return user
+
+# Dependency to check if user is admin
+async def get_current_admin(current_user: dict = Depends(get_current_user)) -> dict:
+    if current_user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
+        )
+    return current_user
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
