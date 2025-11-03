@@ -16,6 +16,8 @@ const ProductDetail = () => {
   const [category, setCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { addToCart, getCartCount } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     fetchProduct();
