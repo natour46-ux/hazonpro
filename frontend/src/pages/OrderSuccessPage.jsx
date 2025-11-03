@@ -41,23 +41,35 @@ const OrderSuccessPage = () => {
               )}
 
               <div>
-                <h3 className="font-bold text-lg mb-3">השלבים הבאים:</h3>
-                <ul className="text-right space-y-2 text-gray-700">
-                  <li className="flex items-start gap-2">
-                    <span>✉️</span>
-                    <span>נשלח אליך אישור הזמנה למייל בקרוב</span>
+                <h3 className="font-bold text-lg mb-3">מה הלאה?</h3>
+                <ul className="text-right space-y-3 text-gray-700">
+                  <li className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <span className="text-2xl">✅</span>
+                    <div>
+                      <strong>ההזמנה נשלחה!</strong>
+                      <p className="text-sm">פרטי ההזמנה נשלחו אליך למייל {customerEmail && `(${customerEmail})`}</p>
+                    </div>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span>📞</span>
-                    <span>נציג יצור איתך קשר לאישור פרטי ההזמנה</span>
+                  <li className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <span className="text-2xl">📧</span>
+                    <div>
+                      <strong>קיבלנו את פרטיך</strong>
+                      <p className="text-sm">המייל נשלח גם אלינו ואנחנו כבר מטפלים בהזמנה</p>
+                    </div>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span>📦</span>
-                    <span>נתחיל בהכנת המשלוח שלך</span>
+                  <li className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                    <span className="text-2xl">📞</span>
+                    <div>
+                      <strong>נחזור אליך בהקדם</strong>
+                      <p className="text-sm">נציג יצור איתך קשר תוך 24 שעות לאישור ההזמנה</p>
+                    </div>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <span>🚚</span>
-                    <span>המוצרים יישלחו אליך בהקדם האפשרי</span>
+                  <li className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <span className="text-2xl">🚚</span>
+                    <div>
+                      <strong>הכנת משלוח</strong>
+                      <p className="text-sm">לאחר האישור נתחיל להכין את המוצרים למשלוח</p>
+                    </div>
                   </li>
                 </ul>
               </div>
