@@ -158,8 +158,13 @@ class Order(BaseModel):
     customer_name: str
     customer_email: EmailStr
     customer_phone: str
+    shipping_address: Optional[str] = None
+    city: Optional[str] = None
     items: List[OrderItem]
+    subtotal: float
+    shipping_cost: float = 0
     total: float
+    payment_method: str = "cash"  # cash, bank_transfer, bit, credit_card
     status: str = "pending"  # pending, confirmed, shipped, delivered, cancelled
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -168,7 +173,13 @@ class OrderCreate(BaseModel):
     customer_name: str
     customer_email: EmailStr
     customer_phone: str
+    shipping_address: Optional[str] = None
+    city: Optional[str] = None
     items: List[OrderItem]
+    subtotal: float
+    shipping_cost: float = 0
+    total: float
+    payment_method: str = "cash"
     notes: Optional[str] = None
 
 class ContactForm(BaseModel):
