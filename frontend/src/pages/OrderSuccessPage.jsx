@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const OrderSuccessPage = () => {
   const location = useLocation();
-  const { orderId, total } = location.state || {};
+  const { orderId, total, customerEmail } = location.state || {};
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
