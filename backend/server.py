@@ -630,6 +630,23 @@ async def upload_file(file: UploadFile = File(...), current_admin: dict = Depend
     file_url = f"/uploads/{unique_filename}"
     return {"url": file_url}
 
+# ==================== CONTACT FORM API ====================
+@api_router.post("/contact")
+async def submit_contact_form(form_data: ContactForm):
+    """Submit contact form - public endpoint"""
+    # Save to database for admin to see
+    contact_dict = form_data.model_dump()
+    contact_dict['id'] = str(uuid.uuid4())
+    contact_dict['created_at'] = datetime.now(timezone.utc).isoformat()
+    contact_dict['status'] = 'new'  # new, read, replied
+    
+    await db.contacts.insert_one(contact_dict)
+    
+    # TODO: Send email notification to hazon.pro@gmail.com
+    # This requires SMTP configuration which wasn't set up yet
+    
+    return {"message": "Contact form submitted successfully", "id": contact_dict['id']}
+
 # Include the router in the main app
 app.include_router(api_router)
 
