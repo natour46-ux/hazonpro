@@ -171,6 +171,13 @@ class OrderCreate(BaseModel):
     items: List[OrderItem]
     notes: Optional[str] = None
 
+class ContactForm(BaseModel):
+    name: str
+    email: EmailStr
+    phone: str
+    subject: Optional[str] = None
+    message: str
+
 # Dependency to get current user from token
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     token = credentials.credentials
