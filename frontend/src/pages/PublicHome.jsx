@@ -12,6 +12,7 @@ const API = `${BACKEND_URL}/api`;
 const PublicHome = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { getCartCount } = useCart();
 
   useEffect(() => {
     fetchCategories();
