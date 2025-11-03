@@ -16,6 +16,7 @@ const PublicProducts = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
+  const { getCartCount } = useCart();
 
   useEffect(() => {
     fetchData();
