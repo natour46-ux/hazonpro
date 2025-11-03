@@ -584,6 +584,13 @@ async def create_order(order_data: OrderCreate):
     order_dict = order.model_dump()
     order_dict['created_at'] = order_dict['created_at'].isoformat()
     await db.orders.insert_one(order_dict)
+    
+    # Send confirmation emails
+    try:
+        await send_order_confirmation_emails(order_dict)
+    except Exception as e:
+        logger.error(f"Failed to send order emails: {str(e)}")
+    
     return order
 
 @api_router.get("/admin/orders", response_model=List[Order])
