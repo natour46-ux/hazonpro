@@ -13,6 +13,10 @@ import OrdersManagement from "@/pages/OrdersManagement";
 import PublicHome from "@/pages/PublicHome";
 import PublicProducts from "@/pages/PublicProducts";
 import ProductDetail from "@/pages/ProductDetail";
+import CartPage from "@/pages/CartPage";
+import AboutPage from "@/pages/AboutPage";
+import ContactPage from "@/pages/ContactPage";
+import { CartProvider } from "@/context/CartContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
