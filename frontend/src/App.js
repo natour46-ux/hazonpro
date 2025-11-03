@@ -16,6 +16,8 @@ import ProductDetail from "@/pages/ProductDetail";
 import CartPage from "@/pages/CartPage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
+import CheckoutPage from "@/pages/CheckoutPage";
+import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import { CartProvider } from "@/context/CartContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
