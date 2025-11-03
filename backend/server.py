@@ -382,6 +382,247 @@ async def delete_user(user_id: str, current_admin: dict = Depends(get_current_ad
         )
     return {"message": "User deleted successfully"}
 
+# ==================== CATEGORIES API ====================
+@api_router.get("/categories", response_model=List[Category])
+async def get_categories():
+    """Get all categories - public endpoint"""
+    categories = await db.categories.find({}, {"_id": 0}).to_list(1000)
+    for cat in categories:
+        if isinstance(cat.get('created_at'), str):
+            cat['created_at'] = datetime.fromisoformat(cat['created_at'])
+    return categories
+
+@api_router.post("/admin/categories", response_model=Category)
+async def create_category(category_data: CategoryCreate, current_admin: dict = Depends(get_current_admin)):
+    """Create new category - admin only"""
+    category = Category(**category_data.model_dump())
+    cat_dict = category.model_dump()
+    cat_dict['created_at'] = cat_dict['created_at'].isoformat()
+    await db.categories.insert_one(cat_dict)
+    return category
+
+@api_router.put("/admin/categories/{category_id}", response_model=Category)
+async def update_category(category_id: str, category_data: CategoryCreate, current_admin: dict = Depends(get_current_admin)):
+    """Update category - admin only"""
+    result = await db.categories.update_one(
+        {"id": category_id},
+        {"$set": category_data.model_dump(exclude_unset=True)}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    category = await db.categories.find_one({"id": category_id}, {"_id": 0})
+    if isinstance(category.get('created_at'), str):
+        category['created_at'] = datetime.fromisoformat(category['created_at'])
+    return Category(**category)
+
+@api_router.delete("/admin/categories/{category_id}")
+async def delete_category(category_id: str, current_admin: dict = Depends(get_current_admin)):
+    """Delete category - admin only"""
+    result = await db.categories.delete_one({"id": category_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return {"message": "Category deleted successfully"}
+
+# ==================== PRODUCTS API ====================
+@api_router.get("/products", response_model=List[Product])
+async def get_products(category_id: Optional[str] = None):
+    """Get all active products - public endpoint"""
+    query = {"is_active": True}
+    if category_id:
+        query["category_id"] = category_id
+    products = await db.products.find(query, {"_id": 0}).to_list(1000)
+    for prod in products:
+        if isinstance(prod.get('created_at'), str):
+            prod['created_at'] = datetime.fromisoformat(prod['created_at'])
+    return products
+
+@api_router.get("/admin/products", response_model=List[Product])
+async def get_all_products(current_admin: dict = Depends(get_current_admin)):
+    """Get all products including inactive - admin only"""
+    products = await db.products.find({}, {"_id": 0}).to_list(1000)
+    for prod in products:
+        if isinstance(prod.get('created_at'), str):
+            prod['created_at'] = datetime.fromisoformat(prod['created_at'])
+    return products
+
+@api_router.get("/products/{product_id}", response_model=Product)
+async def get_product(product_id: str):
+    """Get single product - public endpoint"""
+    product = await db.products.find_one({"id": product_id, "is_active": True}, {"_id": 0})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if isinstance(product.get('created_at'), str):
+        product['created_at'] = datetime.fromisoformat(product['created_at'])
+    return Product(**product)
+
+@api_router.post("/admin/products", response_model=Product)
+async def create_product(product_data: ProductCreate, current_admin: dict = Depends(get_current_admin)):
+    """Create new product - admin only"""
+    product = Product(**product_data.model_dump())
+    prod_dict = product.model_dump()
+    prod_dict['created_at'] = prod_dict['created_at'].isoformat()
+    await db.products.insert_one(prod_dict)
+    return product
+
+@api_router.put("/admin/products/{product_id}", response_model=Product)
+async def update_product(product_id: str, product_data: ProductUpdate, current_admin: dict = Depends(get_current_admin)):
+    """Update product - admin only"""
+    update_data = product_data.model_dump(exclude_unset=True)
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = await db.products.update_one(
+        {"id": product_id},
+        {"$set": update_data}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    product = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if isinstance(product.get('created_at'), str):
+        product['created_at'] = datetime.fromisoformat(product['created_at'])
+    return Product(**product)
+
+@api_router.delete("/admin/products/{product_id}")
+async def delete_product(product_id: str, current_admin: dict = Depends(get_current_admin)):
+    """Delete product - admin only"""
+    result = await db.products.delete_one({"id": product_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return {"message": "Product deleted successfully"}
+
+# ==================== PROMOTIONS API ====================
+@api_router.get("/promotions", response_model=List[Promotion])
+async def get_active_promotions():
+    """Get active promotions - public endpoint"""
+    now = datetime.now(timezone.utc)
+    promotions = await db.promotions.find({
+        "is_active": True,
+        "start_date": {"$lte": now.isoformat()},
+        "end_date": {"$gte": now.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    for promo in promotions:
+        for field in ['created_at', 'start_date', 'end_date']:
+            if isinstance(promo.get(field), str):
+                promo[field] = datetime.fromisoformat(promo[field])
+    return promotions
+
+@api_router.get("/admin/promotions", response_model=List[Promotion])
+async def get_all_promotions(current_admin: dict = Depends(get_current_admin)):
+    """Get all promotions - admin only"""
+    promotions = await db.promotions.find({}, {"_id": 0}).to_list(1000)
+    for promo in promotions:
+        for field in ['created_at', 'start_date', 'end_date']:
+            if isinstance(promo.get(field), str):
+                promo[field] = datetime.fromisoformat(promo[field])
+    return promotions
+
+@api_router.post("/admin/promotions", response_model=Promotion)
+async def create_promotion(promo_data: PromotionCreate, current_admin: dict = Depends(get_current_admin)):
+    """Create new promotion - admin only"""
+    promotion = Promotion(**promo_data.model_dump())
+    promo_dict = promotion.model_dump()
+    promo_dict['created_at'] = promo_dict['created_at'].isoformat()
+    promo_dict['start_date'] = promo_dict['start_date'].isoformat()
+    promo_dict['end_date'] = promo_dict['end_date'].isoformat()
+    await db.promotions.insert_one(promo_dict)
+    return promotion
+
+@api_router.put("/admin/promotions/{promo_id}", response_model=Promotion)
+async def update_promotion(promo_id: str, promo_data: PromotionCreate, current_admin: dict = Depends(get_current_admin)):
+    """Update promotion - admin only"""
+    update_dict = promo_data.model_dump()
+    update_dict['start_date'] = update_dict['start_date'].isoformat()
+    update_dict['end_date'] = update_dict['end_date'].isoformat()
+    
+    result = await db.promotions.update_one(
+        {"id": promo_id},
+        {"$set": update_dict}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Promotion not found")
+    
+    promotion = await db.promotions.find_one({"id": promo_id}, {"_id": 0})
+    for field in ['created_at', 'start_date', 'end_date']:
+        if isinstance(promotion.get(field), str):
+            promotion[field] = datetime.fromisoformat(promotion[field])
+    return Promotion(**promotion)
+
+@api_router.delete("/admin/promotions/{promo_id}")
+async def delete_promotion(promo_id: str, current_admin: dict = Depends(get_current_admin)):
+    """Delete promotion - admin only"""
+    result = await db.promotions.delete_one({"id": promo_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Promotion not found")
+    return {"message": "Promotion deleted successfully"}
+
+# ==================== ORDERS API ====================
+@api_router.post("/orders", response_model=Order)
+async def create_order(order_data: OrderCreate):
+    """Create new order - public endpoint"""
+    # Calculate total
+    total = sum(item.price * item.quantity for item in order_data.items)
+    
+    order = Order(**order_data.model_dump(), total=total)
+    order_dict = order.model_dump()
+    order_dict['created_at'] = order_dict['created_at'].isoformat()
+    await db.orders.insert_one(order_dict)
+    return order
+
+@api_router.get("/admin/orders", response_model=List[Order])
+async def get_all_orders(current_admin: dict = Depends(get_current_admin)):
+    """Get all orders - admin only"""
+    orders = await db.orders.find({}, {"_id": 0}).to_list(1000)
+    for order in orders:
+        if isinstance(order.get('created_at'), str):
+            order['created_at'] = datetime.fromisoformat(order['created_at'])
+    return orders
+
+@api_router.put("/admin/orders/{order_id}/status")
+async def update_order_status(order_id: str, status: str, current_admin: dict = Depends(get_current_admin)):
+    """Update order status - admin only"""
+    valid_statuses = ["pending", "confirmed", "shipped", "delivered", "cancelled"]
+    if status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {', '.join(valid_statuses)}")
+    
+    result = await db.orders.update_one(
+        {"id": order_id},
+        {"$set": {"status": status}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {"message": "Order status updated successfully"}
+
+@api_router.delete("/admin/orders/{order_id}")
+async def delete_order(order_id: str, current_admin: dict = Depends(get_current_admin)):
+    """Delete order - admin only"""
+    result = await db.orders.delete_one({"id": order_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {"message": "Order deleted successfully"}
+
+# ==================== FILE UPLOAD API ====================
+@api_router.post("/admin/upload")
+async def upload_file(file: UploadFile = File(...), current_admin: dict = Depends(get_current_admin)):
+    """Upload image - admin only"""
+    # Create uploads directory if doesn't exist
+    upload_dir = Path("/app/backend/uploads")
+    upload_dir.mkdir(exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = Path(file.filename).suffix
+    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    file_path = upload_dir / unique_filename
+    
+    # Save file
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Return URL
+    file_url = f"/uploads/{unique_filename}"
+    return {"url": file_url}
+
 # Include the router in the main app
 app.include_router(api_router)
 
