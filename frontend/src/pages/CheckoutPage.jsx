@@ -80,8 +80,9 @@ const CheckoutPage = () => {
 
       await axios.post(`${API}/orders`, orderData);
       
-      clearCart();
-      navigate('/order-success', { state: { orderId: Date.now(), total } });
+      // Don't clear cart - keep it for reference
+      // clearCart();
+      navigate('/order-success', { state: { orderId: Date.now(), total, customerEmail: formData.customerEmail } });
     } catch (err) {
       setError('שגיאה בשליחת ההזמנה. אנא נסה שוב.');
     } finally {
