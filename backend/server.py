@@ -304,3 +304,28 @@ logger = logging.getLogger(__name__)
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+
+@app.on_event("startup")
+async def create_admin_user():
+    """Create initial admin user if it doesn't exist"""
+    admin_email = "natour46@gmail.com"
+    admin_password = "Amro8045@"
+    
+    # Check if admin already exists
+    existing_admin = await db.users.find_one({"email": admin_email})
+    if not existing_admin:
+        logger.info(f"Creating initial admin user: {admin_email}")
+        password_hash = get_password_hash(admin_password)
+        admin_user = User(
+            email=admin_email,
+            password_hash=password_hash,
+            role="admin",
+            approved=True
+        )
+        
+        admin_dict = admin_user.model_dump()
+        admin_dict['created_at'] = admin_dict['created_at'].isoformat()
+        await db.users.insert_one(admin_dict)
+        logger.info("Admin user created successfully")
+    else:
+        logger.info("Admin user already exists")
