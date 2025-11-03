@@ -150,12 +150,36 @@ const ProductDetail = () => {
             )}
 
             <div className="border-t pt-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <label className="font-medium">כמות:</label>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  >
+                    -
+                  </Button>
+                  <span className="w-16 text-center font-bold text-xl">{quantity}</span>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    disabled={quantity >= product.stock}
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+
               <Button 
                 size="lg" 
                 className="w-full text-lg py-6"
                 disabled={product.stock === 0}
+                onClick={() => {
+                  addToCart(product, quantity);
+                  navigate('/cart');
+                }}
               >
-                {product.stock > 0 ? 'צור קשר לרכישה' : 'אזל מהמלאי'}
+                {product.stock > 0 ? '🛒 הוסף לסל' : 'אזל מהמלאי'}
               </Button>
               
               <div className="grid grid-cols-3 gap-4 text-center">
