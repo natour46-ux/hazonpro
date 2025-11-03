@@ -78,11 +78,11 @@ const CheckoutPage = () => {
         status: 'pending'
       };
 
-      await axios.post(`${API}/orders`, orderData);
+      const response = await axios.post(`${API}/orders`, orderData);
       
-      // Don't clear cart - keep it for reference
-      // clearCart();
-      navigate('/order-success', { state: { orderId: Date.now(), total, customerEmail: formData.customerEmail } });
+      // Clear cart only after order is confirmed and emails sent
+      clearCart();
+      navigate('/order-success', { state: { orderId: response.data.id, total, customerEmail: formData.customerEmail } });
     } catch (err) {
       setError('שגיאה בשליחת ההזמנה. אנא נסה שוב.');
     } finally {
