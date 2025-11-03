@@ -13,6 +13,7 @@ import uuid
 from datetime import datetime, timezone
 import shutil
 from auth import get_password_hash, verify_password, create_access_token, decode_access_token
+from email_service import send_order_confirmation_emails, send_contact_form_email
 
 
 ROOT_DIR = Path(__file__).parent
