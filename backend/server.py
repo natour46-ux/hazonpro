@@ -626,6 +626,11 @@ async def upload_file(file: UploadFile = File(...), current_admin: dict = Depend
 # Include the router in the main app
 app.include_router(api_router)
 
+# Serve uploaded files
+upload_dir = Path("/app/backend/uploads")
+upload_dir.mkdir(exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
