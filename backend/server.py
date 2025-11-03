@@ -580,16 +580,25 @@ async def delete_promotion(promo_id: str, current_admin: dict = Depends(get_curr
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     """Create new order - public endpoint"""
+    # Create order
     order = Order(**order_data.model_dump())
     order_dict = order.model_dump()
     order_dict['created_at'] = order_dict['created_at'].isoformat()
+    
+    # Save to database first
     await db.orders.insert_one(order_dict)
+    logger.info(f"Order {order.id} saved to database")
     
     # Send confirmation emails
     try:
-        await send_order_confirmation_emails(order_dict)
+        email_sent = await send_order_confirmation_emails(order_dict)
+        if email_sent:
+            logger.info(f"Order confirmation emails sent successfully for order {order.id}")
+        else:
+            logger.warning(f"Failed to send emails for order {order.id}, but order was saved")
     except Exception as e:
-        logger.error(f"Failed to send order emails: {str(e)}")
+        logger.error(f"Error sending order emails for {order.id}: {str(e)}")
+        # Order is still saved even if email fails
     
     return order
 
