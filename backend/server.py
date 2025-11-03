@@ -579,10 +579,7 @@ async def delete_promotion(promo_id: str, current_admin: dict = Depends(get_curr
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     """Create new order - public endpoint"""
-    # Calculate total
-    total = sum(item.price * item.quantity for item in order_data.items)
-    
-    order = Order(**order_data.model_dump(), total=total)
+    order = Order(**order_data.model_dump())
     order_dict = order.model_dump()
     order_dict['created_at'] = order_dict['created_at'].isoformat()
     await db.orders.insert_one(order_dict)
