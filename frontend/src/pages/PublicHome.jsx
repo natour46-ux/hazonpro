@@ -45,7 +45,7 @@ const PublicHome = () => {
                 🛡️
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">CommSecure</h1>
+                <h1 className="text-3xl font-bold text-gray-900">חזון מערכות אבטחה</h1>
                 <p className="text-sm text-gray-600">פתרונות תקשורת ואבטחה מתקדמים</p>
               </div>
             </div>
