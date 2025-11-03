@@ -53,11 +53,27 @@ const PublicHome = () => {
               </div>
             </div>
             <div className="flex gap-4">
+              <Link to="/about">
+                <Button variant="outline">אודות</Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="outline">צור קשר</Button>
+              </Link>
               <Link to="/products">
                 <Button variant="outline">כל המוצרים</Button>
               </Link>
+              <Link to="/cart" className="relative">
+                <Button>
+                  🛒 סל קניות
+                  {getCartCount() > 0 && (
+                    <Badge className="absolute -top-2 -left-2 bg-red-500">
+                      {getCartCount()}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
               <Link to="/admin/login">
-                <Button>כניסה למערכת</Button>
+                <Button variant="outline">כניסה למערכת</Button>
               </Link>
             </div>
           </div>
