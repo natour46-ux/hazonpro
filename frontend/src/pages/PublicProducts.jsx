@@ -82,9 +82,15 @@ const PublicProducts = () => {
               </div>
               <h1 className="text-2xl font-bold text-gray-900">חזון מערכות אבטחה</h1>
             </Link>
-            <Link to="/admin/login">
-              <Button variant="outline">כניסה למערכת</Button>
-            </Link>
+            <div className="flex gap-4">
+              <Link to="/about"><Button variant="outline">אודות</Button></Link>
+              <Link to="/contact"><Button variant="outline">צור קשר</Button></Link>
+              <Link to="/cart" className="relative">
+                <Button>
+                  🛒 סל ({getCartCount()})
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
