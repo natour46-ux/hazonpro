@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from "axios";
+import AdminLogin from "@/pages/AdminLogin";
+import Signup from "@/pages/Signup";
+import AdminDashboard from "@/pages/AdminDashboard";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -42,9 +45,10 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
