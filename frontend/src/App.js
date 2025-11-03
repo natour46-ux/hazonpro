@@ -35,33 +35,38 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<PublicHome />} />
-          <Route path="/products" element={<PublicProducts />} />
-          <Route path="/product/:productId" element={<ProductDetail />} />
-          
-          {/* Auth Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Admin Panel with nested routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminPanel />
-            </ProtectedRoute>
-          }>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="products" element={<ProductsManagement />} />
-            <Route path="categories" element={<CategoriesManagement />} />
-            <Route path="promotions" element={<PromotionsManagement />} />
-            <Route path="orders" element={<OrdersManagement />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <CartProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<PublicHome />} />
+            <Route path="/products" element={<PublicProducts />} />
+            <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            
+            {/* Auth Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/signup" element={<Signup />} />
+            
+            {/* Admin Panel with nested routes */}
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            }>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="products" element={<ProductsManagement />} />
+              <Route path="categories" element={<CategoriesManagement />} />
+              <Route path="promotions" element={<PromotionsManagement />} />
+              <Route path="orders" element={<OrdersManagement />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </CartProvider>
   );
 }
 
